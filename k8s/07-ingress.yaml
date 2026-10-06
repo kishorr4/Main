@@ -1,0 +1,51 @@
+# ============================================
+# 1. API Ingress
+# ============================================
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: axion-api-ingress
+  namespace: axion
+  annotations:
+    nginx.ingress.kubernetes.io/use-regex: "true"
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+
+spec:
+  ingressClassName: nginx
+
+  rules:
+    - host: axion.local
+      http:
+        paths:
+          - path: /api(/|$)(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: telemetry-query-service
+                port:
+                  number: 8080
+
+---
+# ============================================
+# 2. UI Ingress
+# ============================================
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: axion-ui-ingress
+  namespace: axion
+
+spec:
+  ingressClassName: nginx
+
+  rules:
+    - host: axion.local
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: axion-ui
+                port:
+                  number: 80

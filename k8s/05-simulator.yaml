@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: data-simulator
+  namespace: axion
+spec:
+  replicas: 1
+
+  selector:
+    matchLabels:
+      app: data-simulator
+
+  template:
+    metadata:
+      labels:
+        app: data-simulator
+
+    spec:
+      containers:
+        - name: data-simulator
+          image: axion-simulator:1.0
+
+          env:
+            - name: INGESTION_HOST
+              value: "ingestion-service"
+
+            - name: INGESTION_PORT
+              value: "8080"
